@@ -54,6 +54,7 @@ function special_heading_register_block_type( $block_name, $supports_override = 
 				__( 'heading', 'special-heading-block' ),
 				__( 'gradient', 'special-heading-block' ),
 				__( 'highlight', 'special-heading-block' ),
+				__( 'outline', 'special-heading-block' ),
 			),
 
 			'attributes' => array(
