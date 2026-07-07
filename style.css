@@ -1,0 +1,28 @@
+.special-heading-block {
+	--special-heading-gradient: linear-gradient(135deg, #7c3aed, #db2777 50%, #f59e0b);
+}
+
+.special-heading-block__highlight {
+	background: var(--special-heading-gradient);
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-box-decoration-break: clone;
+	box-decoration-break: clone;
+	color: transparent;
+}
+
+.special-heading-block.is-outline .special-heading-block__highlight {
+	background: none;
+	color: inherit;
+	-webkit-text-fill-color: transparent;
+	-webkit-text-stroke: 0.045em currentColor;
+}
+
+@supports not (-webkit-text-stroke: 1px currentColor) {
+	.special-heading-block.is-outline .special-heading-block__highlight {
+		background: var(--special-heading-gradient);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+}
