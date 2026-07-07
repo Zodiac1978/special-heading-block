@@ -1,5 +1,6 @@
 .special-heading-block {
-	--special-heading-gradient: linear-gradient(135deg, #7c3aed, #db2777 50%, #f59e0b);
+	--special-heading-gradient-angle: 135deg;
+	--special-heading-gradient: linear-gradient(var(--special-heading-gradient-angle), #7c3aed, #db2777 50%, #f59e0b);
 }
 
 .special-heading-block__highlight {

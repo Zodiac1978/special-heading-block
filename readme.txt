@@ -16,7 +16,7 @@ Special Heading Block adds a `Special Heading` block without requiring a JavaScr
 
 It uses WordPress block supports for common editor controls such as alignment, colors, gradients, spacing, borders, dimensions, and typography. The block itself is registered and rendered in PHP.
 
-The highlighted part of the heading can use the selected gradient, or it can be displayed as an outlined text style.
+The highlighted part of the heading can use the selected gradient with a custom angle, or it can be displayed as an outlined text style.
 
 == Frequently Asked Questions ==
 
@@ -31,6 +31,10 @@ Yes. The block supports heading levels from `H1` to `H6`.
 = Can I use theme gradients? =
 
 Yes. The block uses the native WordPress gradient controls. Preset gradients and custom gradients are applied to the highlighted text.
+
+= Can I change the gradient angle? =
+
+Yes. The gradient angle can be set from `0` to `360` degrees.
 
 = Does this plugin need a build step? =
 

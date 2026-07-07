@@ -86,6 +86,13 @@ function special_heading_register_block_type( $block_name, $supports_override = 
 					'default' => false,
 					'label'   => __( 'Use outline', 'special-heading-block' ),
 				),
+				'gradientAngle' => array(
+					'type'    => 'integer',
+					'default' => 135,
+					'minimum' => 0,
+					'maximum' => 360,
+					'label'   => __( 'Gradient angle', 'special-heading-block' ),
+				),
 			),
 
 			'supports'    => array_merge(
@@ -193,19 +200,126 @@ function special_heading_render_block( $attributes ) {
  * @return string
  */
 function special_heading_get_gradient_style( $attributes ) {
-	if ( ! empty( $attributes['gradient'] ) ) {
-		$slug = sanitize_title( $attributes['gradient'] );
+	$gradient_angle = special_heading_get_gradient_angle( $attributes );
+	$style          = array(
+		'--special-heading-gradient-angle:' . $gradient_angle . 'deg',
+	);
 
-		return '--special-heading-gradient:var(--wp--preset--gradient--' . $slug . ')';
+	if ( ! empty( $attributes['gradient'] ) ) {
+		$slug     = sanitize_title( $attributes['gradient'] );
+		$gradient = special_heading_get_gradient_preset( $slug );
+
+		if ( '' !== $gradient ) {
+			$style[] = '--special-heading-gradient:' . special_heading_set_gradient_angle( $gradient, $gradient_angle );
+		} else {
+			$style[] = '--special-heading-gradient:var(--wp--preset--gradient--' . $slug . ')';
+		}
+
+		return safecss_filter_attr( implode( ';', $style ) );
 	}
 
 	$custom_gradient = $attributes['style']['color']['gradient'] ?? '';
 
 	if ( ! is_string( $custom_gradient ) || '' === trim( $custom_gradient ) ) {
+		return safecss_filter_attr( implode( ';', $style ) );
+	}
+
+	$style[] = '--special-heading-gradient:' . special_heading_set_gradient_angle( $custom_gradient, $gradient_angle );
+
+	return safecss_filter_attr( implode( ';', $style ) );
+}
+
+/**
+ * Get a normalized gradient angle.
+ *
+ * @param array $attributes Block attributes.
+ * @return int
+ */
+function special_heading_get_gradient_angle( $attributes ) {
+	$gradient_angle = isset( $attributes['gradientAngle'] ) ? (int) $attributes['gradientAngle'] : 135;
+
+	return min( 360, max( 0, $gradient_angle ) );
+}
+
+/**
+ * Get a gradient preset by slug from global WordPress settings.
+ *
+ * @param string $slug Gradient preset slug.
+ * @return string
+ */
+function special_heading_get_gradient_preset( $slug ) {
+	if ( ! function_exists( 'wp_get_global_settings' ) ) {
 		return '';
 	}
 
-	return safecss_filter_attr( '--special-heading-gradient:' . $custom_gradient );
+	$gradients = wp_get_global_settings( array( 'color', 'gradients' ) );
+
+	return special_heading_find_gradient_preset( $gradients, $slug );
+}
+
+/**
+ * Recursively find a gradient preset in a global settings array.
+ *
+ * @param mixed  $value Global settings value.
+ * @param string $slug Gradient preset slug.
+ * @return string
+ */
+function special_heading_find_gradient_preset( $value, $slug ) {
+	if ( ! is_array( $value ) ) {
+		return '';
+	}
+
+	if (
+		isset( $value['slug'], $value['gradient'] )
+		&& $slug === $value['slug']
+		&& is_string( $value['gradient'] )
+	) {
+		return $value['gradient'];
+	}
+
+	foreach ( $value as $child ) {
+		$gradient = special_heading_find_gradient_preset( $child, $slug );
+
+		if ( '' !== $gradient ) {
+			return $gradient;
+		}
+	}
+
+	return '';
+}
+
+/**
+ * Apply an angle to a linear gradient.
+ *
+ * @param string $gradient Gradient CSS value.
+ * @param int    $angle Gradient angle.
+ * @return string
+ */
+function special_heading_set_gradient_angle( $gradient, $angle ) {
+	$gradient = trim( $gradient );
+	$pattern  = '/linear-gradient\(\s*('
+		. '(?:-?\d*\.?\d+deg)'
+		. '|(?:to\s+(?:top|bottom|left|right)(?:\s+(?:top|bottom|left|right))?)'
+		. ')\s*,/i';
+
+	if ( ! preg_match( '/^\s*linear-gradient\s*\(/i', $gradient ) ) {
+		return $gradient;
+	}
+
+	if ( preg_match( $pattern, $gradient ) ) {
+		$updated_gradient = preg_replace(
+			$pattern,
+			'linear-gradient(' . $angle . 'deg,',
+			$gradient,
+			1
+		);
+
+		return is_string( $updated_gradient ) ? $updated_gradient : $gradient;
+	}
+
+	$updated_gradient = preg_replace( '/linear-gradient\(\s*/i', 'linear-gradient(' . $angle . 'deg, ', $gradient, 1 );
+
+	return is_string( $updated_gradient ) ? $updated_gradient : $gradient;
 }
 
 /**
