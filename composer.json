@@ -1,0 +1,23 @@
+{
+	"name": "zodiac1978/special-heading-block",
+	"description": "A PHP-only heading block with gradient and outline highlighting.",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"authors": [
+		{
+			"name": "Torsten Landsiedel",
+			"homepage": "https://torstenlandsiedel.de"
+		}
+	],
+	"require-dev": {
+		"phpstan/phpstan": "^2.1",
+		"php-stubs/wordpress-stubs": "^6.8",
+		"szepeviktor/phpstan-wordpress": "^2.0"
+	},
+	"scripts": {
+		"analyse": "phpstan analyse"
+	},
+	"config": {
+		"sort-packages": true
+	}
+}
