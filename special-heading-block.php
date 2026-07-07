@@ -17,7 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 define( 'SPECIAL_HEADING_BLOCK_VERSION', '1.0.0' );
 define( 'SPECIAL_HEADING_BLOCK_NAME', 'special-heading-block/special-heading' );
-define( 'SPECIAL_HEADING_BLOCK_LEGACY_NAME', 'my-plugin/special-heading' );
 
 /**
  * Register the PHP-only block and its frontend stylesheet.
@@ -25,31 +24,10 @@ define( 'SPECIAL_HEADING_BLOCK_LEGACY_NAME', 'my-plugin/special-heading' );
 function special_heading_register_block() {
 	special_heading_register_block_type( SPECIAL_HEADING_BLOCK_NAME );
 
-	/*
-	 * Keep blocks that were inserted while this was still a proof of concept
-	 * rendering, but hide the old namespace from the inserter.
-	 */
-	special_heading_register_block_type(
-		SPECIAL_HEADING_BLOCK_LEGACY_NAME,
-		array(
-			'inserter' => false,
-		)
-	);
-
 	wp_enqueue_block_style(
 		SPECIAL_HEADING_BLOCK_NAME,
 		array(
 			'handle' => 'special-heading-block',
-			'src'    => plugin_dir_url( __FILE__ ) . 'style.css',
-			'path'   => plugin_dir_path( __FILE__ ) . 'style.css',
-			'ver'    => SPECIAL_HEADING_BLOCK_VERSION,
-		)
-	);
-
-	wp_enqueue_block_style(
-		SPECIAL_HEADING_BLOCK_LEGACY_NAME,
-		array(
-			'handle' => 'special-heading-block-legacy',
 			'src'    => plugin_dir_url( __FILE__ ) . 'style.css',
 			'path'   => plugin_dir_path( __FILE__ ) . 'style.css',
 			'ver'    => SPECIAL_HEADING_BLOCK_VERSION,
