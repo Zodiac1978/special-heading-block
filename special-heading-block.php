@@ -6,9 +6,10 @@
  * Version:     1.0.0
  * Author:      Torsten Landsiedel
  * Author URI:  https://torstenlandsiedel.de
- * License:     GPL 2
- * License URI: http://opensource.org/licenses/GPL-2.0
+ * License:     GPL-2.0-or-later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Requires at least: 7.0
+ * Requires PHP: 7.4
  *
  * @package Special_Heading_Block
  */
@@ -19,12 +20,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 define( 'SPECIAL_HEADING_BLOCK_VERSION', '1.0.0' );
 define( 'SPECIAL_HEADING_BLOCK_NAME', 'special-heading-block/special-heading' );
+define( 'SPECIAL_HEADING_BLOCK_MIN_GRADIENT_ANGLE', 0 );
+define( 'SPECIAL_HEADING_BLOCK_MAX_GRADIENT_ANGLE', 360 );
+define( 'SPECIAL_HEADING_BLOCK_DEFAULT_GRADIENT_ANGLE', 135 );
 
 /**
  * Register the PHP-only block and its frontend stylesheet.
  */
 function special_heading_register_block() {
-	special_heading_register_block_type( SPECIAL_HEADING_BLOCK_NAME );
+	special_heading_register_block_type();
 
 	wp_enqueue_block_style(
 		SPECIAL_HEADING_BLOCK_NAME,
@@ -39,14 +43,11 @@ function special_heading_register_block() {
 add_action( 'init', 'special_heading_register_block' );
 
 /**
- * Register a Special Heading block name.
- *
- * @param string $block_name Block name to register.
- * @param array  $supports_override Supports to merge into the default supports.
+ * Register the Special Heading block type.
  */
-function special_heading_register_block_type( $block_name, $supports_override = array() ) {
+function special_heading_register_block_type() {
 	register_block_type(
-		$block_name,
+		SPECIAL_HEADING_BLOCK_NAME,
 		array(
 			'title'       => __( 'Special Heading', 'special-heading-block' ),
 			'description' => __( 'A heading with an optional gradient or outline highlight.', 'special-heading-block' ),
@@ -88,49 +89,46 @@ function special_heading_register_block_type( $block_name, $supports_override = 
 				),
 				'gradientAngle' => array(
 					'type'    => 'integer',
-					'default' => 135,
+					'default' => SPECIAL_HEADING_BLOCK_DEFAULT_GRADIENT_ANGLE,
 					'label'   => __( 'Gradient angle', 'special-heading-block' ),
 				),
 			),
 
-			'supports'    => array_merge(
-				array(
-					'autoRegister' => true,
-					'align'        => array( 'wide', 'full' ),
-					'color'        => array(
-						'text'                            => true,
-						'background'                      => true,
-						'gradients'                       => true,
-						'__experimentalSkipSerialization' => array( 'gradients' ),
-					),
-					'spacing'      => array(
-						'margin'   => true,
-						'padding'  => true,
-						'blockGap' => true,
-					),
-					'border'       => array(
-						'color'  => true,
-						'radius' => true,
-						'style'  => true,
-						'width'  => true,
-					),
-					'dimensions'   => array(
-						'minHeight' => true,
-					),
-					'typography'   => array(
-						'fontSize'                     => true,
-						'lineHeight'                   => true,
-						'textAlign'                    => true,
-						'textIndent'                   => true,
-						'__experimentalFontFamily'     => true,
-						'__experimentalFontStyle'      => true,
-						'__experimentalFontWeight'     => true,
-						'__experimentalLetterSpacing'  => true,
-						'__experimentalTextDecoration' => true,
-						'__experimentalTextTransform'  => true,
-					),
+			'supports'   => array(
+				'autoRegister' => true,
+				'align'        => array( 'wide', 'full' ),
+				'color'        => array(
+					'text'                            => true,
+					'background'                      => true,
+					'gradients'                       => true,
+					'__experimentalSkipSerialization' => array( 'gradients' ),
 				),
-				$supports_override
+				'spacing'      => array(
+					'margin'   => true,
+					'padding'  => true,
+					'blockGap' => true,
+				),
+				'border'       => array(
+					'color'  => true,
+					'radius' => true,
+					'style'  => true,
+					'width'  => true,
+				),
+				'dimensions'   => array(
+					'minHeight' => true,
+				),
+				'typography'   => array(
+					'fontSize'                     => true,
+					'lineHeight'                   => true,
+					'textAlign'                    => true,
+					'textIndent'                   => true,
+					'__experimentalFontFamily'     => true,
+					'__experimentalFontStyle'      => true,
+					'__experimentalFontWeight'     => true,
+					'__experimentalLetterSpacing'  => true,
+					'__experimentalTextDecoration' => true,
+					'__experimentalTextTransform'  => true,
+				),
 			),
 
 			'render_callback' => 'special_heading_render_block',
@@ -237,9 +235,14 @@ function special_heading_get_gradient_style( $attributes ) {
  * @return int
  */
 function special_heading_get_gradient_angle( $attributes ) {
-	$gradient_angle = isset( $attributes['gradientAngle'] ) ? (int) $attributes['gradientAngle'] : 135;
+	$gradient_angle = isset( $attributes['gradientAngle'] )
+		? (int) $attributes['gradientAngle']
+		: SPECIAL_HEADING_BLOCK_DEFAULT_GRADIENT_ANGLE;
 
-	return min( 360, max( 0, $gradient_angle ) );
+	return min(
+		SPECIAL_HEADING_BLOCK_MAX_GRADIENT_ANGLE,
+		max( SPECIAL_HEADING_BLOCK_MIN_GRADIENT_ANGLE, $gradient_angle )
+	);
 }
 
 /**

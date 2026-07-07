@@ -43,6 +43,10 @@ Please open a [new issue](https://github.com/Zodiac1978/special-heading-block/is
 
 Props to the WordPress contributors working on PHP-only block registration and block supports.
 
+## License
+
+Special Heading Block is licensed under the GNU General Public License v2.0 or later (`GPL-2.0-or-later`).
+
 ## Changelog
 
 ### 1.0.0
