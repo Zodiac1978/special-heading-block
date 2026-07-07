@@ -155,6 +155,7 @@ function special_heading_render_block( $attributes ) {
 	$text_after      = isset( $attributes['textAfter'] ) ? trim( $attributes['textAfter'] ) : '';
 	$is_outline      = ! empty( $attributes['outline'] );
 	$heading_classes = 'special-heading-block';
+	$gradient_style  = special_heading_get_gradient_style( $attributes );
 
 	if ( $is_outline ) {
 		$heading_classes .= ' is-outline';
@@ -167,12 +168,8 @@ function special_heading_render_block( $attributes ) {
 	}
 
 	if ( '' !== $highlighted ) {
-		$highlight_style = special_heading_get_gradient_style( $attributes );
-		$style_attribute = $highlight_style ? ' style="' . esc_attr( $highlight_style ) . '"' : '';
-
 		$parts[] = sprintf(
-			'<span class="special-heading-block__highlight"%1$s>%2$s</span>',
-			$style_attribute,
+			'<span class="special-heading-block__highlight">%s</span>',
 			esc_html( $highlighted )
 		);
 	}
@@ -181,8 +178,14 @@ function special_heading_render_block( $attributes ) {
 		$parts[] = '<span class="special-heading-block__text">' . esc_html( $text_after ) . '</span>';
 	}
 
+	$extra_attributes = array( 'class' => $heading_classes );
+
+	if ( '' !== $gradient_style ) {
+		$extra_attributes['style'] = $gradient_style;
+	}
+
 	$wrapper_attributes = get_block_wrapper_attributes(
-		array( 'class' => $heading_classes )
+		$extra_attributes
 	);
 
 	return sprintf(
