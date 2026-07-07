@@ -89,8 +89,6 @@ function special_heading_register_block_type( $block_name, $supports_override = 
 				'gradientAngle' => array(
 					'type'    => 'integer',
 					'default' => 135,
-					'minimum' => 0,
-					'maximum' => 360,
 					'label'   => __( 'Gradient angle', 'special-heading-block' ),
 				),
 			),
