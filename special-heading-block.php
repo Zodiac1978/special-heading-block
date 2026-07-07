@@ -9,6 +9,8 @@
  * License:     GPL 2
  * License URI: http://opensource.org/licenses/GPL-2.0
  * Requires at least: 7.0
+ *
+ * @package Special_Heading_Block
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
